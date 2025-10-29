@@ -1,0 +1,176 @@
+.job-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.assessment-preview {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.assessment-preview h3 {
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.assessment-preview p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.assessment-sections {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.sections-count {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.75rem;
+}
+
+.sections-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sections-list li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-color);
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+}
+
+.sections-list li strong {
+  color: var(--primary-color);
+}
+
+.questions-count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.no-assessment {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(139, 92, 246, 0.05));
+  border: 2px dashed var(--border-color);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.no-assessment p {
+  margin: 0.5rem 0;
+}
+
+.no-assessment .hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.job-header {
+  margin-bottom: 2rem;
+}
+
+.job-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.job-status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.job-status-badge[data-status="active"] {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.job-status-badge[data-status="archived"] {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--text-secondary);
+}
+
+.job-order {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.job-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.job-slug {
+  color: var(--text-secondary);
+  font-family: 'Courier New', monospace;
+}
+
+.job-content {
+  background: var(--surface-color);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.job-section {
+  margin-bottom: 2rem;
+}
+
+.job-section:last-child {
+  margin-bottom: 0;
+}
+
+.job-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.job-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.job-tag {
+  padding: 0.5rem 1rem;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary-color);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .job-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .job-content {
+    padding: 1.5rem;
+  }
+}
+
