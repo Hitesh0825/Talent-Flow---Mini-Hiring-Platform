@@ -61,7 +61,7 @@ function seedDemoData() {
 
   // Create assessments for 5 tech roles
   const assessmentJobs = [jobs[0], jobs[1], jobs[2], jobs[5], jobs[7]]; // FE, BE, Fullstack, ML, Mobile
-  const assessments: Assessment[] = assessmentJobs.map((job, i) => ({
+  const assessments: Assessment[] = assessmentJobs.map((job) => ({
     id: crypto.randomUUID(),
     jobId: job.id,
     title: `${job.title} Technical Assessment`,
