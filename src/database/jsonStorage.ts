@@ -8,87 +8,94 @@ let assessmentResponsesStorage: AssessmentResponse[] = [];
 
 // Seed demo data if storage is empty
 function seedDemoData() {
+  // Only seed if empty
   if (jobsStorage.length || candidatesStorage.length || assessmentsStorage.length) return;
 
   const now = Date.now();
 
-  const jobs: Job[] = [
-    { id: crypto.randomUUID(), title: 'Frontend Engineer', slug: 'frontend-engineer', status: 'active', tags: ['React', 'TypeScript', 'UI'], order: 1, description: 'Build delightful UIs with React and modern tooling.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'Backend Engineer', slug: 'backend-engineer', status: 'active', tags: ['Node.js', 'API', 'SQL'], order: 2, description: 'Design resilient APIs and services.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'Full Stack Developer', slug: 'full-stack-developer', status: 'active', tags: ['React', 'Node.js', 'PostgreSQL'], order: 3, description: 'Own features end-to-end across the stack.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'DevOps Engineer', slug: 'devops-engineer', status: 'active', tags: ['AWS', 'Terraform', 'CI/CD'], order: 4, description: 'Automate infrastructure and deployment pipelines.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'Data Engineer', slug: 'data-engineer', status: 'active', tags: ['Python', 'ETL', 'Spark'], order: 5, description: 'Build robust data pipelines.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'Machine Learning Engineer', slug: 'ml-engineer', status: 'active', tags: ['Python', 'ML', 'MLOps'], order: 6, description: 'Ship ML models to production.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'QA Automation Engineer', slug: 'qa-automation-engineer', status: 'active', tags: ['Playwright', 'Cypress', 'Automation'], order: 7, description: 'Ensure quality with automated testing.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'Mobile Developer', slug: 'mobile-developer', status: 'active', tags: ['React Native', 'iOS', 'Android'], order: 8, description: 'Build cross-platform mobile apps.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'Security Engineer', slug: 'security-engineer', status: 'active', tags: ['AppSec', 'Threat Modeling', 'SIEM'], order: 9, description: 'Harden systems and processes.', createdAt: now, updatedAt: now },
-    { id: crypto.randomUUID(), title: 'Site Reliability Engineer', slug: 'sre', status: 'active', tags: ['Observability', 'Reliability', 'Kubernetes'], order: 10, description: 'Keep systems fast and reliable.', createdAt: now, updatedAt: now },
-  ];
-
+  // Generate 25 jobs, with a mix of active and archived
+  const jobTitles = Array.from({length: 25}, (_, i) => `Job ${i + 1}`);
+  const jobStatus = (i: number) => (i % 4 === 0 ? 'archived' : 'active'); // ~6 archived
+  const jobTags = ['React', 'Node.js', 'TypeScript', 'UI', 'API', 'SQL', 'Python', 'ML', 'DevOps', 'AWS', 'CI/CD', 'ETL'];
+  const jobs: Job[] = jobTitles.map((title, i) => ({
+    id: crypto.randomUUID(),
+    title,
+    slug: title.toLowerCase().replace(/\s+/g, '-'),
+    status: jobStatus(i),
+    tags: [jobTags[i%jobTags.length], jobTags[(i+2)%jobTags.length]],
+    order: i+1,
+    description: `Description for ${title}`,
+    createdAt: now - i*1000000,
+    updatedAt: now - i*500000,
+  }));
   jobsStorage = jobs;
 
-  const candidateNames = [
-    'Aarav Mehta','Vivaan Shah','Aditya Verma','Vihaan Gupta','Arjun Khanna',
-    'Reyansh Bhat','Muhammad Ali','Ishaan Kapoor','Atharv Nair','Krish Patel',
-    'Ananya Singh','Diya Malhotra','Aadhya Rao','Myra Das','Anika Iyer',
-    'Sara Khan','Meera Joshi','Navya Kulkarni','Riya Chawla','Kiara Desai'
-  ];
-  const stages: Candidate['stage'][] = ['applied','screen','tech','offer','hired','rejected'];
-
-  const candidates: Candidate[] = candidateNames.map((name, idx) => {
-    const job = jobs[idx % jobs.length];
-    const email = `${name.toLowerCase().replace(/\s+/g,'')}@example.com`;
-    const stage = stages[idx % stages.length];
-    const appliedAt = now - (idx * 86400000) /* days */;
+  // Generate 1000 candidates, distributed randomly among jobs and stages
+  const stages: Candidate['stage'][] = ['applied', 'screen', 'tech', 'offer', 'hired', 'rejected'];
+  const candidateNames = (n: number) => Array.from({length: n}, (_, i) => `Candidate ${i + 1}`);
+  const candidateArr = candidateNames(1000);
+  const candidates: Candidate[] = candidateArr.map((name, idx) => {
+    const job = jobs[Math.floor(Math.random() * jobs.length)];
+    const stage = stages[Math.floor(Math.random() * stages.length)];
+    const appliedAt = now - Math.floor(Math.random() * 90) * 86400000; // Applied within last 90 days
     return {
       id: crypto.randomUUID(),
       name,
-      email,
-      phone: `+91-98${(10000000 + idx * 12345).toString().slice(0,7)}`,
-      linkedin: `https://www.linkedin.com/in/${name.toLowerCase().replace(/\s+/g,'-')}`,
+      email: `${name.toLowerCase().replace(/\s+/g, '')}${idx}@example.com`,
+      phone: `+91-9${(Math.floor(Math.random()*1e9)).toString().padStart(9, '0')}`,
+      linkedin: `https://www.linkedin.com/in/${name.toLowerCase().replace(/\s+/g, '-')}`,
       stage,
       jobId: job.id,
       jobTitle: job.title,
       appliedAt,
-      updatedAt: appliedAt + 3600000,
-      notes: idx % 3 === 0 ? [
-        { id: crypto.randomUUID(), text: 'Initial screening complete.', createdAt: appliedAt + 7200000 },
-      ] : [],
+      updatedAt: appliedAt + Math.floor(Math.random()*86400000),
+      notes: idx % 13 === 0 ? [{ id: crypto.randomUUID(), text: 'Screened by HR.', createdAt: appliedAt + 500000 }] : [],
     };
   });
-
   candidatesStorage = candidates;
 
-  // Create assessments for 5 tech roles
-  const assessmentJobs = [jobs[0], jobs[1], jobs[2], jobs[5], jobs[7]]; // FE, BE, Fullstack, ML, Mobile
+  // 3 assessments, each with at least 10 questions (across 2+ sections)
+  const assessmentJobs = [jobs[0], jobs[5], jobs[10]];
+  const sectionsAndQuestions = [
+    {
+      title: 'General Knowledge',
+      n: 5,
+      types: ['single_choice', 'multi_choice', 'numeric', 'short_text', 'long_text']
+    },
+    {
+      title: 'Technical Skills',
+      n: 5,
+      types: ['single_choice', 'multi_choice', 'numeric', 'short_text', 'long_text']
+    },
+  ];
+  const questionText = (secIdx: number, qIdx: number) => `Question ${secIdx + 1}.${qIdx + 1}`;
   const assessments: Assessment[] = assessmentJobs.map((job) => ({
     id: crypto.randomUUID(),
     jobId: job.id,
-    title: `${job.title} Technical Assessment`,
-    description: `Evaluate core competencies for the ${job.title} role.`,
-    sections: [
-      {
-        id: crypto.randomUUID(),
-        title: 'Core Concepts',
-        questions: [
-          { id: crypto.randomUUID(), type: 'short_text', question: 'Describe your most challenging project.', required: true, maxLength: 500 },
-          { id: crypto.randomUUID(), type: 'single_choice', question: 'Years of relevant experience?', required: true, options: ['0-1','2-3','4-6','7+'] },
-          { id: crypto.randomUUID(), type: 'numeric', question: 'Rate your proficiency (1-10).', required: true, numericMin: 1, numericMax: 10 },
-        ],
-      },
-      {
-        id: crypto.randomUUID(),
-        title: 'Technical',
-        questions: [
-          { id: crypto.randomUUID(), type: 'multi_choice', question: 'Pick the tools you use regularly.', required: false, options: job.tags.concat(['Git','Docker']) },
-          { id: crypto.randomUUID(), type: 'long_text', question: 'Explain a tricky bug you fixed and how.', required: true, max: 1000 },
-        ],
-      },
-    ],
+    title: `${job.title} Assessment`,
+    description: `Assessment for ${job.title}`,
+    sections: sectionsAndQuestions.map((sec, secIdx) => ({
+      id: crypto.randomUUID(),
+      title: sec.title,
+      questions: Array.from({length: sec.n}, (_, qIdx) => {
+        const type = sec.types[qIdx % sec.types.length] as Assessment['sections'][0]['questions'][0]['type'];
+        const opts = type === 'single_choice' || type === 'multi_choice' ? ['Option 1', 'Option 2', 'Option 3'] : undefined;
+        return {
+          id: crypto.randomUUID(),
+          type,
+          question: questionText(secIdx, qIdx),
+          options: opts,
+          required: qIdx % 2 === 0,
+          numericMin: type === 'numeric' ? 0 : undefined,
+          numericMax: type === 'numeric' ? 10 : undefined,
+          maxLength: type === 'short_text' ? 200 : undefined,
+          max: type === 'long_text' ? 1000 : undefined,
+        };
+      })
+    })),
     createdAt: now,
     updatedAt: now,
   }));
-
   assessmentsStorage = assessments;
 
   saveToStorage();

@@ -93,46 +93,49 @@ export async function fetchCandidates(params: any = {}) {
   }
 }
 
+// Utility to inject artificial latency and error for writes
+function artificialWriteDelay<T>(fn: () => T | Promise<T>): Promise<T> {
+  const latency = 200 + Math.floor(Math.random() * 1000); // 200-1200ms
+  const errorRate = Math.random() < (0.05 + Math.random() * 0.05); // 5-10%
+  return new Promise<T>((resolve, reject) => {
+    setTimeout(() => {
+      if (errorRate) {
+        reject(new Error('Random write failure occurred'));
+        return;
+      }
+      Promise.resolve(fn()).then(resolve, reject);
+    }, latency);
+  });
+}
+
 export async function createJob(jobData: any) {
-  try {
+  return artificialWriteDelay(() => {
     const id = createJobStorage(jobData);
     const allJobs = getAllJobs();
     return allJobs.find(j => j.id === id);
-  } catch (error) {
-    console.error('Error creating job:', error);
-    throw error;
-  }
+  });
 }
 
 export async function updateJob(id: string, updates: any) {
-  try {
+  return artificialWriteDelay(() => {
     return updateJobStorage(id, updates);
-  } catch (error) {
-    console.error('Error updating job:', error);
-    throw error;
-  }
+  });
 }
 
 export async function createCandidate(candidateData: any) {
-  try {
+  return artificialWriteDelay(() => {
     candidateData.appliedAt = Date.now();
     candidateData.updatedAt = Date.now();
     const id = createCandidateStorage(candidateData);
     const allCandidates = getAllCandidates();
     return allCandidates.find(c => c.id === id);
-  } catch (error) {
-    console.error('Error creating candidate:', error);
-    throw error;
-  }
+  });
 }
 
 export async function updateCandidate(id: string, updates: any) {
-  try {
+  return artificialWriteDelay(() => {
     return updateCandidateStorage(id, updates);
-  } catch (error) {
-    console.error('Error updating candidate:', error);
-    throw error;
-  }
+  });
 }
 
 export async function fetchCandidateById(id: string) {
@@ -158,16 +161,18 @@ export async function fetchAssessmentByJobId(jobId: string) {
 }
 
 export async function saveAssessment(jobId: string, data: any) {
-  createOrUpdateAssessment({
-    id: data.id,
-    jobId,
-    title: data.title,
-    description: data.description,
-    sections: data.sections || [],
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  } as any);
-  return getAssessmentByJobId(jobId);
+  return artificialWriteDelay(() => {
+    createOrUpdateAssessment({
+      id: data.id,
+      jobId,
+      title: data.title,
+      description: data.description,
+      sections: data.sections || [],
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    } as any);
+    return getAssessmentByJobId(jobId);
+  });
 }
 
 export async function fetchTimelineForCandidate(id: string) {
