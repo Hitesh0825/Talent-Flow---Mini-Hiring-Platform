@@ -51,7 +51,7 @@ export default function JobCard({ job, onEdit, onArchive, onReorder, onClick }: 
         </div>
         <div className="job-actions">
           <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="icon-btn">
-            ✏️
+            edit
           </button>
           <button onClick={(e) => { e.stopPropagation(); onArchive(); }} className="icon-btn">
             {job.status === 'archived' ? '📤' : '📥'}

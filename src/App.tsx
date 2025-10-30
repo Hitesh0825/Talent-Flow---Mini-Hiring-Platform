@@ -37,6 +37,8 @@ function App() {
             <Route path="candidates" element={<Candidates />} />
             <Route path="candidates/:id" element={<CandidateDetail />} />
             <Route path="assessments" element={<Assessments />} />
+            {/* Catch-all route to redirect unknown paths to '/' */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>
